@@ -1,8 +1,8 @@
 <?php
 	// 自分のkintoneの設定
-	define("API_TOKEN", "1NI3zgLP7sUbFVvCqAfuXSJJt4AAF7n6wbASaCIy"); 
-	define("SUB_DOMAIN", "banno"); 
-	define("APP_NO", "2"); 
+	define("API_TOKEN", ""); 
+	define("SUB_DOMAIN", ""); 
+	define("APP_NO", ""); 
 	//サーバ送信するHTTPヘッダを設定
 	$options = array(
 	    'http'=>array(
