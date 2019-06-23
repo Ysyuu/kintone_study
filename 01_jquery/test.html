@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>ページタイトル</title>
+        <meta name="keywords" content="キーワード1,キーワード2">
+        <meta name="description" content="ページの説明">
+    </head>
+    <body>  
+        <div class="table"></div>
+        <div class="addable-contents"></div>
+        <script src="js/jquery.js"></script>
+        <script src="js/jquery-ui.min.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                const add_list = ["あ", "い", "う"];
+                const column = 4;
+                const row = 4;
+                var now_drag_object = null;
+                var elements = [];
+
+                function create_keywords_table() {
+                    var table_html = '</p><tr class="head"><th></th><p>';
+                    for (var j = 1; j <= column; j++) {
+                        table_html += '</p><th>' + j + '</th><p>';
+                    };
+                    for (var i = 1; i <= row; i++) {
+                        table_html += '</p><tr class="content"><th>' + i + '</th><p>';
+                        for (var j = 1; j <= column; j++) {
+                            table_html += '</p><td class="droppable" data-row="'+ i +'" data-column="' + j + '"><p>';
+                            $.each(elements, function(index, element) {
+                                if (element["row"] != i || element["column"] != j) return true;
+                                table_html += '</p><div class="table-content" data-id="' + element["id"] + '">' + element["name"] + '</div>';
+                            });
+                            table_html += '</td><p>';
+                        };
+                        table_html += '</tr><p>';
+                    };
+                    $('#table').html(table_html);
+                }
+
+                function create_keyword_list() {
+                    const keyword_list_div = add_list.map(function(element, index, array) { return '</p><div class="addable-content">' + element + '</div><p>'}).join('');
+                    $('.addable-contents').html(keyword_list_div);
+                }
+  
+                function bind_droppable() {
+                    $('.table-content').draggable({
+                        start:function() {
+                            now_drag_object = $(this);
+                        },
+                        stop: function(event, ui) {
+                            create_contents();
+                            now_drag_object = null;
+                        }
+                    });
+
+                    $('.addable-content').draggable({
+                        start:function() {
+                            now_drag_object = $(this);
+                        },
+                        stop: function(event, ui) {
+                            create_contents();
+                            now_drag_object = null;
+                        }
+                    });
+
+                    $('.droppable').droppable({
+                        classes: {
+                            "ui-droppable-hover": "ui-state-hover"
+                        },
+                        drop: function(event, ui) {
+                            console.log("drop");
+                            const row = $(this).data("row");
+                            const column = $(this).data("column");
+                            const id = now_drag_object.data("id");
+                            const index = elements.map(function(element, index, array) { return element.id }).indexOf(id);
+                            if (now_drag_object.hasClass("addable-content")) {
+                                elements.push({"id": elements.length + 1, "name": now_drag_object.text(), "row": row, "column": column});
+                            } else {
+                                elements[index]["row"] = row;
+                                elements[index]["column"] = column;
+                            }
+                        }
+                    });
+                };
+
+                function create_contents() {
+                    create_keywords_table();
+                    create_keyword_list();
+                    bind_droppable();
+                }
+
+                create_contents();
+            });
+        </script>
+    </body>
+</html>
